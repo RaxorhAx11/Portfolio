@@ -1,3 +1,4 @@
+document.body.style.zoom = "100%";
 
 /**
  * add event listener on multiple elements

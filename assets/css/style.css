@@ -110,7 +110,7 @@
     color: var(--roman-silver);
     font-size: 1.6rem;
     line-height: 1.75;
-    overflow: hidden;
+    overflow: hidden;  
   }
   
   body.loaded { overflow: overlay; }
@@ -125,7 +125,7 @@
     background-color: var(--white);
     border-radius: 20px;
   }
-  
+
   
   
   
@@ -543,7 +543,9 @@
   .service-card .card-title {
     color: var(--content-color, var(--raisin-black));
     margin-block: 20px;
+
   }
+  
   
   .service-card .card-text { color: var(--content-color); }
   
@@ -1079,4 +1081,3 @@ button {
     margin: 10px;
     cursor: pointer;
 }
-
