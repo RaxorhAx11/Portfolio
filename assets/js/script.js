@@ -184,23 +184,88 @@ window.onload = function () {
   const yesButton = document.getElementById("yes-btn");
   const noButton = document.getElementById("no-btn");
   const audio = document.getElementById("backgroundMusic");
+  const body = document.body;
 
-  // Show the prompt on page load
+  // Show the prompt and blur the background on page load
   prompt.style.display = "block";
 
-  // Add event listeners
+  // Event listener for the "Yes" button
   yesButton.addEventListener("click", () => {
     audio.play()
       .then(() => console.log("Audio playback started successfully."))
       .catch(error => console.error("Error playing audio:", error));
-    prompt.style.display = "none"; // Hide prompt
+    
+    // Remove blur and hide the prompt with animation
+    body.classList.remove("no-blur");
+    prompt.classList.add("hidden");
+
+    setTimeout(() => {
+      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
+    }, 500); // Match transition duration
   });
 
+  // Event listener for the "No" button
   noButton.addEventListener("click", () => {
     console.log("User declined to play audio.");
-    audio.pause(); // Ensure audio is paused
-    audio.currentTime = 0; // Reset the audio
-    prompt.style.display = "none"; // Hide prompt
+    audio.pause();
+    audio.currentTime = 0;
+
+    // Remove blur and hide the prompt with animation
+    body.classList.remove("no-blur");
+    prompt.classList.add("hidden");
+
+    setTimeout(() => {
+      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
+    }, 500); // Match transition duration
   });
+
+  // Apply blur initially
+  body.classList.add("no-blur");
 };
 
+
+window.onload = function () {
+  const prompt = document.getElementById("music-prompt");
+  const yesButton = document.getElementById("yes-btn");
+  const noButton = document.getElementById("no-btn");
+  const audio = document.getElementById("backgroundMusic");
+  const body = document.body;
+
+  // Initially, the blur is applied on body and prompt is hidden
+  body.classList.add("no-blur");
+
+  // Show the prompt after a small delay (for smooth visual)
+  setTimeout(() => {
+    prompt.classList.add("visible");
+  }, 500); // Delay so that blur transition is visible to user
+
+  // Event listener for the "Yes" button
+  yesButton.addEventListener("click", () => {
+    audio.play()
+      .then(() => console.log("Audio playback started successfully."))
+      .catch(error => console.error("Error playing audio:", error));
+
+    // Remove blur and hide the prompt with smooth fade-out
+    body.classList.remove("no-blur");
+    prompt.classList.remove("visible");
+
+    setTimeout(() => {
+      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
+    }, 500); // Match transition duration
+  });
+
+  // Event listener for the "No" button
+  noButton.addEventListener("click", () => {
+    console.log("User declined to play audio.");
+    audio.pause();
+    audio.currentTime = 0;
+
+    // Remove blur and hide the prompt with smooth fade-out
+    body.classList.remove("no-blur");
+    prompt.classList.remove("visible");
+
+    setTimeout(() => {
+      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
+    }, 500); // Match transition duration
+  });
+};

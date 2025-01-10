@@ -1082,133 +1082,63 @@ button {
     cursor: pointer;
 }
 
-/* Container for the music prompt */
-#music-prompt {
-  display: none; /* Initially hidden */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(145deg, #383838, #444444);
-  color: #ffffff;
-  padding: 25px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  border-radius: 12px;
-  text-align: center;
-  animation: fadeIn 0.6s ease-in-out;
-}
-
-/* Fade-in animation for the music prompt */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Container for the music prompt */
-#music-prompt {
-  display: none; /* Initially hidden */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #ffffff;
-  color: #333333;
-  padding: 20px 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
-  font-family: "Arial", sans-serif;
-}
-
-/* Fade-in animation for the music prompt */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
 /* Prompt text */
 #music-prompt p {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 30px;
+  margin-bottom: 10px;
   color: #444444;
+  text-align: center;
+  z-index: 2;
 }
 
-/* Container for the music prompt */
+/* Prompt container */
 #music-prompt {
-  display: none; /* Initially hidden */
-  position: fixed;
-  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 300%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.9); /* Slightly opaque white */
-  color: #333333;
-  padding: 20px 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
   border-radius: 10px;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
-  font-family: "Arial", sans-serif;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10; /* Ensure the prompt is on top */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }
 
-/* Fade-in animation for the music prompt */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-/* Prompt text */
-#music-prompt p {
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #444444;
-}
-
-/* Transparent buttons */
+/* Equal sized buttons */
 #music-prompt button {
-  margin: 0 10px;
-  padding: 5px 20px;
-  font-size: 14px;
-  color: #5ab7d0;
-  background: transparent;
+  margin: 10px;
+  padding: 10px 30px;
+  font-size: 20px;
+  color: #edf1f3;
+  background: #383d3f;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
+  width: 150px; /* Equal width for both buttons */
+  height: 50px; /* Equal height for both buttons */
 }
 
 /* "No" button with a neutral border */
 #no-btn {
-  color: #6c757d;
-  border-color: #6c757d;
+  color: #2b2d2f;
+  border-color: #191a1b;
 }
 
 /* Hover effect for buttons */
 #music-prompt button:hover {
-  background: rgba(0, 123, 255, 0.1); /* Slightly opaque background on hover */
-  color: #0056b3;
-  border-color: #0056b3;
+  background: rgba(0, 123, 255, 0.1);
+  color: #070809;
+  border-color: #111212;
 }
 
 #no-btn:hover {
-  background: rgba(108, 117, 125, 0.1); /* Neutral hover background */
+  background: rgba(108, 117, 125, 0.1);
   color: #5a6268;
   border-color: #5a6268;
 }
@@ -1216,9 +1146,19 @@ button {
 /* Active state for buttons */
 #music-prompt button:active {
   transform: scale(0.97);
-  background: rgba(0, 123, 255, 0.2); /* Slightly more opaque on click */
+  background: rgba(69, 76, 84, 0.2);
 }
 
 #no-btn:active {
-  background: rgba(108, 117, 125, 0.2);
+  background: rgba(109, 114, 118, 0.2);
+}
+
+/* Remove blur effect when prompt is shown */
+body.no-blur {
+  filter: none;
+}
+
+/* Show the prompt with smooth fade-in */
+#music-prompt.visible {
+  opacity: 1;
 }
