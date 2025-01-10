@@ -178,3 +178,29 @@ function decreaseVolume(step = 0.1) {
   }
   console.log(`Volume: ${Math.round(audio.volume * 100)}%`);
 }
+
+window.onload = function () {
+  const prompt = document.getElementById("music-prompt");
+  const yesButton = document.getElementById("yes-btn");
+  const noButton = document.getElementById("no-btn");
+  const audio = document.getElementById("backgroundMusic");
+
+  // Show the prompt on page load
+  prompt.style.display = "block";
+
+  // Add event listeners
+  yesButton.addEventListener("click", () => {
+    audio.play()
+      .then(() => console.log("Audio playback started successfully."))
+      .catch(error => console.error("Error playing audio:", error));
+    prompt.style.display = "none"; // Hide prompt
+  });
+
+  noButton.addEventListener("click", () => {
+    console.log("User declined to play audio.");
+    audio.pause(); // Ensure audio is paused
+    audio.currentTime = 0; // Reset the audio
+    prompt.style.display = "none"; // Hide prompt
+  });
+};
+
