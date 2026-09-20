@@ -78,7 +78,7 @@ window.addEventListener("scroll", function () {
 
 
 /**
- * SLIDER (Seamless Infinite Loop)
+ * SLIDER (Seamless Infinite Loop with Enhanced Speed, Smoothness & Mobile Controls)
  */
 
 const sliders = document.querySelectorAll("[data-slider]");
@@ -111,35 +111,42 @@ const initSlider = function (currentSlider) {
   let currentSlidePos = totalOriginalItems;
   let isTransitioning = false;
   let autoSlideTimer = null;
-  const AUTO_SLIDE_DELAY = 3000; // Smooth interval between slides
+  let safetyTimer = null;
+  let queuedAction = null;
+  const TRANSITION_DURATION = 650; // ms: swift, responsive and ultra-smooth
+  const AUTO_SLIDE_DELAY = 3200;    // ms: comfortable viewing interval
 
   const moveSliderItem = function (animated = true) {
     if (!animated) {
       sliderContainer.style.transition = "none";
     } else {
-      sliderContainer.style.transition = "";
+      sliderContainer.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.25, 1, 0.5, 1)`;
     }
 
     if (sliderContainer.children[currentSlidePos]) {
       const targetOffset = sliderContainer.children[currentSlidePos].offsetLeft;
-      sliderContainer.style.transform = `translateX(-${targetOffset}px)`;
+      sliderContainer.style.transform = `translate3d(-${targetOffset}px, 0, 0)`;
     }
 
     if (!animated) {
-      // Force layout reflow so instantaneous jump applies immediately
+      // Force layout reflow so instantaneous jump applies immediately without animating
       sliderContainer.offsetHeight;
-      sliderContainer.style.transition = "";
+      sliderContainer.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.25, 1, 0.5, 1)`;
     }
-  }
+  };
 
   // Position at original first item immediately without transition
   moveSliderItem(false);
 
   /**
-   * Seamless transition reset on boundary reach
+   * Handle completion of slide transition (seamless loop wrap + queue flush)
    */
-  sliderContainer.addEventListener("transitionend", function (e) {
-    if (e.target !== sliderContainer) return;
+  const handleTransitionComplete = function () {
+    if (safetyTimer) {
+      clearTimeout(safetyTimer);
+      safetyTimer = null;
+    }
+
     isTransitioning = false;
 
     // Reached appended clones at the end -> jump back to original items seamlessly
@@ -152,27 +159,62 @@ const initSlider = function (currentSlider) {
       currentSlidePos = currentSlidePos + totalOriginalItems;
       moveSliderItem(false);
     }
+
+    // Flush queued action from rapid user taps on mobile/desktop
+    if (queuedAction) {
+      const nextAction = queuedAction;
+      queuedAction = null;
+      if (nextAction === "next") {
+        slideNext();
+      } else if (nextAction === "prev") {
+        slidePrev();
+      }
+    }
+  };
+
+  /**
+   * Seamless transition reset on boundary reach
+   */
+  sliderContainer.addEventListener("transitionend", function (e) {
+    if (e.target !== sliderContainer) return;
+    handleTransitionComplete();
   });
 
   /**
    * NEXT SLIDE (moves left continuously)
    */
   const slideNext = function () {
-    if (isTransitioning) return;
+    if (isTransitioning) {
+      queuedAction = "next";
+      return;
+    }
+
     isTransitioning = true;
     currentSlidePos++;
     moveSliderItem(true);
-  }
+
+    // Safety fallback timer: guarantees isTransitioning is NEVER permanently locked
+    clearTimeout(safetyTimer);
+    safetyTimer = setTimeout(handleTransitionComplete, TRANSITION_DURATION + 60);
+  };
 
   /**
    * PREVIOUS SLIDE (moves right)
    */
   const slidePrev = function () {
-    if (isTransitioning) return;
+    if (isTransitioning) {
+      queuedAction = "prev";
+      return;
+    }
+
     isTransitioning = true;
     currentSlidePos--;
     moveSliderItem(true);
-  }
+
+    // Safety fallback timer: guarantees isTransitioning is NEVER permanently locked
+    clearTimeout(safetyTimer);
+    safetyTimer = setTimeout(handleTransitionComplete, TRANSITION_DURATION + 60);
+  };
 
   /**
    * AUTO SLIDE CONTROLS (Continuous left-left-left loop)
@@ -181,52 +223,69 @@ const initSlider = function (currentSlider) {
     if (!autoSlideTimer) {
       autoSlideTimer = setInterval(slideNext, AUTO_SLIDE_DELAY);
     }
-  }
+  };
 
   const stopAutoSlide = function () {
     if (autoSlideTimer) {
       clearInterval(autoSlideTimer);
       autoSlideTimer = null;
     }
-  }
+  };
 
   const restartAutoSlide = function () {
     stopAutoSlide();
     startAutoSlide();
-  }
+  };
 
   // Start continuous infinite left auto-sliding
   startAutoSlide();
 
-  // Navigation button listeners
-  if (sliderNextBtn) {
-    sliderNextBtn.addEventListener("click", function () {
-      slideNext();
-      restartAutoSlide();
-    });
-  }
+  /**
+   * Robust Button Event Binding (Immediate response on mobile touch & desktop click)
+   */
+  const setupControlBtn = function (btn, action) {
+    if (!btn) return;
 
-  if (sliderPrevBtn) {
-    sliderPrevBtn.addEventListener("click", function () {
-      slidePrev();
+    let lastInteractionTime = 0;
+
+    const handleAction = function (e) {
+      if (e) {
+        if (e.cancelable && e.type !== "click") {
+          e.preventDefault();
+        }
+        e.stopPropagation();
+      }
+
+      const now = Date.now();
+      // Debounce ghost clicks generated ~300ms after touch events
+      if (now - lastInteractionTime < 250) return;
+      lastInteractionTime = now;
+
+      action();
       restartAutoSlide();
-    });
-  }
+    };
+
+    btn.addEventListener("click", handleAction);
+    btn.addEventListener("touchend", handleAction, { passive: false });
+  };
+
+  setupControlBtn(sliderNextBtn, slideNext);
+  setupControlBtn(sliderPrevBtn, slidePrev);
 
   // Pause on hover
   currentSlider.addEventListener("mouseenter", stopAutoSlide);
   currentSlider.addEventListener("mouseleave", startAutoSlide);
 
   /**
-   * Touch swipe gesture detection for mobile & tablet
+   * Touch swipe gesture detection on mobile & tablet (scoped to sliderContainer)
    */
   let touchStartX = 0;
   let touchStartY = 0;
   let touchEndX = 0;
   let touchEndY = 0;
-  const SWIPE_THRESHOLD = 40; // minimum pixels for a valid swipe
+  const SWIPE_THRESHOLD = 35; // optimal sensitivity for natural swipe
 
-  currentSlider.addEventListener("touchstart", function (e) {
+  sliderContainer.addEventListener("touchstart", function (e) {
     stopAutoSlide();
     if (e.touches && e.touches.length > 0) {
       touchStartX = e.touches[0].clientX;
@@ -236,14 +295,14 @@ const initSlider = function (currentSlider) {
     }
   }, { passive: true });
 
-  currentSlider.addEventListener("touchmove", function (e) {
+  sliderContainer.addEventListener("touchmove", function (e) {
     if (e.touches && e.touches.length > 0) {
       touchEndX = e.touches[0].clientX;
       touchEndY = e.touches[0].clientY;
     }
   }, { passive: true });
 
-  currentSlider.addEventListener("touchend", function () {
+  sliderContainer.addEventListener("touchend", function () {
     const diffX = touchStartX - touchEndX;
     const diffY = touchStartY - touchEndY;
 
@@ -275,19 +334,26 @@ const initSlider = function (currentSlider) {
 
   /**
    * RESPONSIVE & ORIENTATION CHANGE ALIGNMENT
+   * Ensure mobile address bar resize never freezes or distorts slider
    */
-  window.addEventListener("resize", function () {
+  const handleResize = function () {
+    if (safetyTimer) {
+      clearTimeout(safetyTimer);
+      safetyTimer = null;
+    }
+    isTransitioning = false;
+    queuedAction = null;
     moveSliderItem(false);
-  });
+  };
+
+  window.addEventListener("resize", handleResize);
 
   window.addEventListener("orientationchange", function () {
-    setTimeout(function () {
-      moveSliderItem(false);
-    }, 150);
+    setTimeout(handleResize, 150);
   });
 
   window.addEventListener("load", function () {
-    moveSliderItem(false);
+    handleResize();
   });
 
 }
