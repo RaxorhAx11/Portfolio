@@ -1,5 +1,3 @@
-document.body.style.zoom = "100%";
-
 /**
  * add event listener on multiple elements
  */
@@ -27,7 +25,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 /**
  * NAVBAR
- * navbar toggle for mobile
+ * navbar toggle and auto-close for mobile
  */
 
 const navTogglers = document.querySelectorAll("[data-nav-toggler]");
@@ -42,7 +40,23 @@ const toggleNavbar = function () {
   document.body.classList.toggle("nav-active");
 }
 
+const closeNavbar = function () {
+  if (navbar && navbar.classList.contains("active")) {
+    navbar.classList.remove("active");
+    navToggleBtn.classList.remove("active");
+    overlay.classList.remove("active");
+    document.body.classList.remove("nav-active");
+  }
+}
+
 addEventOnElements(navTogglers, "click", toggleNavbar);
+
+const navbarLinks = document.querySelectorAll(".navbar-link");
+addEventOnElements(navbarLinks, "click", closeNavbar);
+
+window.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") closeNavbar();
+});
 
 
 
@@ -64,7 +78,7 @@ window.addEventListener("scroll", function () {
 
 
 /**
- * SLIDER
+ * SLIDER (Seamless Infinite Loop)
  */
 
 const sliders = document.querySelectorAll("[data-slider]");
@@ -75,71 +89,205 @@ const initSlider = function (currentSlider) {
   const sliderPrevBtn = currentSlider.querySelector("[data-slider-prev]");
   const sliderNextBtn = currentSlider.querySelector("[data-slider-next]");
 
-  let totalSliderVisibleItems = Number(getComputedStyle(currentSlider).getPropertyValue("--slider-items"));
-  let totalSlidableItems = sliderContainer.childElementCount - totalSliderVisibleItems;
+  if (!sliderContainer || sliderContainer.children.length === 0) return;
 
-  let currentSlidePos = 0;
+  const originalItems = Array.from(sliderContainer.children);
+  const totalOriginalItems = originalItems.length;
 
-  const moveSliderItem = function () {
-    sliderContainer.style.transform = `translateX(-${sliderContainer.children[currentSlidePos].offsetLeft}px)`;
+  // Clone items to create a seamless infinite buffer: [Prepend Clones] [Originals] [Append Clones]
+  originalItems.forEach(item => {
+    const clone = item.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    sliderContainer.appendChild(clone);
+  });
+
+  originalItems.slice().reverse().forEach(item => {
+    const clone = item.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    sliderContainer.insertBefore(clone, sliderContainer.firstChild);
+  });
+
+  // Start at the first original item
+  let currentSlidePos = totalOriginalItems;
+  let isTransitioning = false;
+  let autoSlideTimer = null;
+  const AUTO_SLIDE_DELAY = 3000; // Smooth interval between slides
+
+  const moveSliderItem = function (animated = true) {
+    if (!animated) {
+      sliderContainer.style.transition = "none";
+    } else {
+      sliderContainer.style.transition = "";
+    }
+
+    if (sliderContainer.children[currentSlidePos]) {
+      const targetOffset = sliderContainer.children[currentSlidePos].offsetLeft;
+      sliderContainer.style.transform = `translateX(-${targetOffset}px)`;
+    }
+
+    if (!animated) {
+      // Force layout reflow so instantaneous jump applies immediately
+      sliderContainer.offsetHeight;
+      sliderContainer.style.transition = "";
+    }
   }
 
+  // Position at original first item immediately without transition
+  moveSliderItem(false);
+
   /**
-   * NEXT SLIDE
+   * Seamless transition reset on boundary reach
+   */
+  sliderContainer.addEventListener("transitionend", function (e) {
+    if (e.target !== sliderContainer) return;
+    isTransitioning = false;
+
+    // Reached appended clones at the end -> jump back to original items seamlessly
+    if (currentSlidePos >= totalOriginalItems * 2) {
+      currentSlidePos = currentSlidePos - totalOriginalItems;
+      moveSliderItem(false);
+    }
+    // Reached prepended clones at the start -> jump forward to original items seamlessly
+    else if (currentSlidePos < totalOriginalItems) {
+      currentSlidePos = currentSlidePos + totalOriginalItems;
+      moveSliderItem(false);
+    }
+  });
+
+  /**
+   * NEXT SLIDE (moves left continuously)
    */
   const slideNext = function () {
-    const slideEnd = currentSlidePos >= totalSlidableItems;
-
-    if (slideEnd) {
-      currentSlidePos = 0;
-    } else {
-      currentSlidePos++;
-    }
-
-    moveSliderItem();
+    if (isTransitioning) return;
+    isTransitioning = true;
+    currentSlidePos++;
+    moveSliderItem(true);
   }
-
-  sliderNextBtn.addEventListener("click", slideNext);
 
   /**
-   * PREVIOUS SLIDE
+   * PREVIOUS SLIDE (moves right)
    */
   const slidePrev = function () {
-    if (currentSlidePos <= 0) {
-      currentSlidePos = totalSlidableItems;
-    } else {
-      currentSlidePos--;
+    if (isTransitioning) return;
+    isTransitioning = true;
+    currentSlidePos--;
+    moveSliderItem(true);
+  }
+
+  /**
+   * AUTO SLIDE CONTROLS (Continuous left-left-left loop)
+   */
+  const startAutoSlide = function () {
+    if (!autoSlideTimer) {
+      autoSlideTimer = setInterval(slideNext, AUTO_SLIDE_DELAY);
+    }
+  }
+
+  const stopAutoSlide = function () {
+    if (autoSlideTimer) {
+      clearInterval(autoSlideTimer);
+      autoSlideTimer = null;
+    }
+  }
+
+  const restartAutoSlide = function () {
+    stopAutoSlide();
+    startAutoSlide();
+  }
+
+  // Start continuous infinite left auto-sliding
+  startAutoSlide();
+
+  // Navigation button listeners
+  if (sliderNextBtn) {
+    sliderNextBtn.addEventListener("click", function () {
+      slideNext();
+      restartAutoSlide();
+    });
+  }
+
+  if (sliderPrevBtn) {
+    sliderPrevBtn.addEventListener("click", function () {
+      slidePrev();
+      restartAutoSlide();
+    });
+  }
+
+  // Pause on hover
+  currentSlider.addEventListener("mouseenter", stopAutoSlide);
+  currentSlider.addEventListener("mouseleave", startAutoSlide);
+
+  /**
+   * Touch swipe gesture detection for mobile & tablet
+   */
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+  const SWIPE_THRESHOLD = 40; // minimum pixels for a valid swipe
+
+  currentSlider.addEventListener("touchstart", function (e) {
+    stopAutoSlide();
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchEndX = touchStartX;
+      touchEndY = touchStartY;
+    }
+  }, { passive: true });
+
+  currentSlider.addEventListener("touchmove", function (e) {
+    if (e.touches && e.touches.length > 0) {
+      touchEndX = e.touches[0].clientX;
+      touchEndY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  currentSlider.addEventListener("touchend", function () {
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
+
+    // Trigger only when horizontal movement dominates vertical scroll
+    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        slideNext();
+      } else {
+        slidePrev();
+      }
     }
 
-    moveSliderItem();
-  }
-
-  sliderPrevBtn.addEventListener("click", slidePrev);
-
-  const dontHaveExtraItem = totalSlidableItems <= 0;
-  if (dontHaveExtraItem) {
-    sliderNextBtn.style.display = 'none';
-    sliderPrevBtn.style.display = 'none';
-  }
+    startAutoSlide();
+  }, { passive: true });
 
   /**
    * slide with [shift + mouse wheel]
    */
-
   currentSlider.addEventListener("wheel", function (event) {
-    if (event.shiftKey && event.deltaY > 0) slideNext();
-    if (event.shiftKey && event.deltaY < 0) slidePrev();
+    if (event.shiftKey && event.deltaY > 0) {
+      slideNext();
+      restartAutoSlide();
+    }
+    if (event.shiftKey && event.deltaY < 0) {
+      slidePrev();
+      restartAutoSlide();
+    }
   });
 
   /**
-   * RESPONSIVE
+   * RESPONSIVE & ORIENTATION CHANGE ALIGNMENT
    */
-
   window.addEventListener("resize", function () {
-    totalSliderVisibleItems = Number(getComputedStyle(currentSlider).getPropertyValue("--slider-items"));
-    totalSlidableItems = sliderContainer.childElementCount - totalSliderVisibleItems;
+    moveSliderItem(false);
+  });
 
-    moveSliderItem();
+  window.addEventListener("orientationchange", function () {
+    setTimeout(function () {
+      moveSliderItem(false);
+    }, 150);
+  });
+
+  window.addEventListener("load", function () {
+    moveSliderItem(false);
   });
 
 }
@@ -147,125 +295,150 @@ const initSlider = function (currentSlider) {
 for (let i = 0, len = sliders.length; i < len; i++) { initSlider(sliders[i]); }
 
 
-    /**
-     * Audio
-     */
+/**
+ * AUDIO CONTROLLER
+ */
 
+(function initAudioController() {
+  const audio = document.getElementById("backgroundMusic");
+  if (!audio) return;
 
-// Get the audio element
+  const playBtn = document.getElementById("playBtn");
+  const pauseBtn = document.getElementById("pauseBtn");
+  const voiceUpBtn = document.getElementById("voiceUpBtn");
+  const voiceDownBtn = document.getElementById("voiceDownBtn");
+  const silentBtn = document.getElementById("silentBtn");
+  const volumeBadge = document.getElementById("volumeBadge");
 
-var audio = document.getElementById('backgroundMusic');
-``
-// Mute/Unmute audio
-function toggleMute() {
+  // Initial default volume
+  audio.volume = 0.8;
+
+  function updateUIState() {
+    const isMuted = audio.muted || audio.volume === 0;
+
+    // Play/Pause active states
+    if (playBtn && pauseBtn) {
+      if (!audio.paused) {
+        playBtn.classList.add("is-active");
+        pauseBtn.classList.remove("is-active");
+        playBtn.setAttribute("aria-pressed", "true");
+        pauseBtn.setAttribute("aria-pressed", "false");
+      } else {
+        playBtn.classList.remove("is-active");
+        pauseBtn.classList.add("is-active");
+        playBtn.setAttribute("aria-pressed", "false");
+        pauseBtn.setAttribute("aria-pressed", "true");
+      }
+    }
+
+    // Silent active state & icon
+    if (silentBtn) {
+      const silentIcon = silentBtn.querySelector("ion-icon");
+      if (isMuted) {
+        silentBtn.classList.add("is-active", "is-muted");
+        silentBtn.setAttribute("aria-pressed", "true");
+        silentBtn.setAttribute("title", "Unmute audio");
+        if (silentIcon) silentIcon.setAttribute("name", "volume-mute");
+      } else {
+        silentBtn.classList.remove("is-active", "is-muted");
+        silentBtn.setAttribute("aria-pressed", "false");
+        silentBtn.setAttribute("title", "Mute audio");
+        if (silentIcon) silentIcon.setAttribute("name", "volume-mute-outline");
+      }
+    }
+
+    // Volume badge
+    if (volumeBadge) {
+      if (isMuted) {
+        volumeBadge.textContent = "0%";
+        volumeBadge.classList.add("is-muted");
+      } else {
+        const pct = Math.round(audio.volume * 100);
+        volumeBadge.textContent = `${pct}%`;
+        volumeBadge.classList.remove("is-muted");
+      }
+    }
+  }
+
+  // Play handler
+  function playAudio() {
+    audio.play().then(() => {
+      updateUIState();
+    }).catch((err) => {
+      console.warn("Audio playback not allowed without interaction:", err);
+      updateUIState();
+    });
+  }
+
+  // Pause handler
+  function pauseAudio() {
+    audio.pause();
+    updateUIState();
+  }
+
+  // Volume Up handler
+  function increaseVolume(step = 0.1) {
+    if (audio.muted) {
+      audio.muted = false;
+    }
+    const target = Math.min(1, Math.round((audio.volume + step) * 10) / 10);
+    audio.volume = target;
+    if (voiceUpBtn) {
+      voiceUpBtn.classList.add("pulse-press");
+      setTimeout(() => voiceUpBtn.classList.remove("pulse-press"), 180);
+    }
+    updateUIState();
+  }
+
+  // Volume Down handler
+  function decreaseVolume(step = 0.1) {
+    const target = Math.max(0, Math.round((audio.volume - step) * 10) / 10);
+    audio.volume = target;
+    if (audio.volume === 0) {
+      audio.muted = true;
+    }
+    if (voiceDownBtn) {
+      voiceDownBtn.classList.add("pulse-press");
+      setTimeout(() => voiceDownBtn.classList.remove("pulse-press"), 180);
+    }
+    updateUIState();
+  }
+
+  // Silent / Toggle Mute handler
+  function toggleSilent() {
     audio.muted = !audio.muted;
-}
-function increaseVolume(step = 0.1) {
-  if (audio.volume + step <= 1) { // Ensure volume does not exceed 1
-      audio.volume += step;
-  } else {
-      audio.volume = 1; // Set to maximum volume
+    if (!audio.muted && audio.volume === 0) {
+      audio.volume = 0.5;
+    }
+    if (silentBtn) {
+      silentBtn.classList.add("pulse-press");
+      setTimeout(() => silentBtn.classList.remove("pulse-press"), 180);
+    }
+    updateUIState();
   }
-  console.log(`Volume: ${Math.round(audio.volume * 100)}%`);
-}
 
-// Function to decrease the volume
-function decreaseVolume(step = 0.1) {
-  if (audio.volume - step >= 0) { // Ensure volume does not go below 0
-      audio.volume -= step;
+  // Attach event listeners
+  if (playBtn) playBtn.addEventListener("click", playAudio);
+  if (pauseBtn) pauseBtn.addEventListener("click", pauseAudio);
+  if (voiceUpBtn) voiceUpBtn.addEventListener("click", () => increaseVolume(0.1));
+  if (voiceDownBtn) voiceDownBtn.addEventListener("click", () => decreaseVolume(0.1));
+  if (silentBtn) silentBtn.addEventListener("click", toggleSilent);
+
+  // Sync state on audio events
+  audio.addEventListener("play", updateUIState);
+  audio.addEventListener("pause", updateUIState);
+  audio.addEventListener("volumechange", updateUIState);
+  audio.addEventListener("ended", updateUIState);
+
+  // Expose global helpers for backward compatibility
+  window.increaseVolume = () => increaseVolume(0.1);
+  window.decreaseVolume = () => decreaseVolume(0.1);
+  window.toggleMute = toggleSilent;
+
+  // Initialize UI once DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateUIState);
   } else {
-      audio.volume = 0; // Mute the audio
+    updateUIState();
   }
-  console.log(`Volume: ${Math.round(audio.volume * 100)}%`);
-}
-
-window.onload = function () {
-  const prompt = document.getElementById("music-prompt");
-  const yesButton = document.getElementById("yes-btn");
-  const noButton = document.getElementById("no-btn");
-  const audio = document.getElementById("backgroundMusic");
-  const body = document.body;
-
-  // Show the prompt and blur the background on page load
-  prompt.style.display = "block";
-
-  // Event listener for the "Yes" button
-  yesButton.addEventListener("click", () => {
-    audio.play()
-      .then(() => console.log("Audio playback started successfully."))
-      .catch(error => console.error("Error playing audio:", error));
-    
-    // Remove blur and hide the prompt with animation
-    body.classList.remove("no-blur");
-    prompt.classList.add("hidden");
-
-    setTimeout(() => {
-      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
-    }, 500); // Match transition duration
-  });
-
-  // Event listener for the "No" button
-  noButton.addEventListener("click", () => {
-    console.log("User declined to play audio.");
-    audio.pause();
-    audio.currentTime = 0;
-
-    // Remove blur and hide the prompt with animation
-    body.classList.remove("no-blur");
-    prompt.classList.add("hidden");
-
-    setTimeout(() => {
-      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
-    }, 500); // Match transition duration
-  });
-
-  // Apply blur initially
-  body.classList.add("no-blur");
-};
-
-
-window.onload = function () {
-  const prompt = document.getElementById("music-prompt");
-  const yesButton = document.getElementById("yes-btn");
-  const noButton = document.getElementById("no-btn");
-  const audio = document.getElementById("backgroundMusic");
-  const body = document.body;
-
-  // Initially, the blur is applied on body and prompt is hidden
-  body.classList.add("no-blur");
-
-  // Show the prompt after a small delay (for smooth visual)
-  setTimeout(() => {
-    prompt.classList.add("visible");
-  }, 500); // Delay so that blur transition is visible to user
-
-  // Event listener for the "Yes" button
-  yesButton.addEventListener("click", () => {
-    audio.play()
-      .then(() => console.log("Audio playback started successfully."))
-      .catch(error => console.error("Error playing audio:", error));
-
-    // Remove blur and hide the prompt with smooth fade-out
-    body.classList.remove("no-blur");
-    prompt.classList.remove("visible");
-
-    setTimeout(() => {
-      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
-    }, 500); // Match transition duration
-  });
-
-  // Event listener for the "No" button
-  noButton.addEventListener("click", () => {
-    console.log("User declined to play audio.");
-    audio.pause();
-    audio.currentTime = 0;
-
-    // Remove blur and hide the prompt with smooth fade-out
-    body.classList.remove("no-blur");
-    prompt.classList.remove("visible");
-
-    setTimeout(() => {
-      prompt.style.display = "none"; // Ensure the prompt is hidden after animation
-    }, 500); // Match transition duration
-  });
-};
+})();

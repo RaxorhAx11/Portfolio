@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 
 
@@ -59,31 +59,38 @@
       <a href="#" class="logo">
         <img src="./assets/images/logo.svg" width="130" height="30" alt="Pfolio home">
       </a>
-      <audio id="backgroundMusic" autoplay loop>
+
+      <audio id="backgroundMusic" loop preload="auto">
         <source src="./assets/audio/background-music.mp3" type="audio/mpeg">
         <source src="./assets/audio/background-music.ogg" type="audio/ogg">
       </audio>
-      <div id="music-prompt">
-        <p>Would you like to play background music?</p>
-        <button id="yes-btn">Yes</button>
-        <button id="no-btn">No</button>
+
+      <div class="header-actions">
+        <div class="header-audio-bar" aria-label="Background music controls">
+          <button class="audio-btn" id="playBtn" type="button" title="Play background music" aria-label="Play">
+            <ion-icon name="play-outline" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="audio-btn is-active" id="pauseBtn" type="button" title="Pause background music"
+            aria-label="Pause">
+            <ion-icon name="pause-outline" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="audio-btn" id="voiceUpBtn" type="button" title="Voice Up" aria-label="Voice Up">
+            <ion-icon name="volume-high-outline" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="audio-btn" id="voiceDownBtn" type="button" title="Voice Down" aria-label="Voice Down">
+            <ion-icon name="volume-low-outline" aria-hidden="true"></ion-icon>
+          </button>
+          <button class="audio-btn" id="silentBtn" type="button" title="Silent" aria-label="Silent">
+            <ion-icon name="volume-mute-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+
+        <button class="nav-toggle-btn" data-nav-toggler data-nav-toggle-btn aria-label="Toggle menu">
+          <span class="line line-1"></span>
+          <span class="line line-2"></span>
+        </button>
       </div>
-      
-    <button onclick="null"></button><button onclick="null"></button><button onclick="null"></button>
-    <button onclick="null"></button><button onclick="null"></button><button onclick="null"></button>
-    <button onclick="null"></button><button onclick="null"></button><button onclick="null"></button>
-    
-    <button onclick="increaseVolume()"><ion-icon name="trending-up-outline"></ion-icon></button>
-    <button onclick="toggleMute()"><ion-icon name="volume-mute-outline"></ion-icon></button>
-    <button onclick="decreaseVolume()"><ion-icon name="trending-down-outline"></ion-icon></button>
-    
-    
-    
-      <button class="nav-toggle-btn" data-nav-toggler data-nav-toggle-btn aria-label="Toggle menu">
-        <span class="line line-1"></span>
-        <span class="line line-2"></span>
-      </button>
-      
+
 
       <nav class="navbar" data-navbar>
         <ul class="navbar-list">
@@ -134,8 +141,8 @@
           <div class="hero-content">
 
             <h1 class="h1 hero-title">Nisarg Patel</h1>
-            
-            
+
+
             <!-- <p class="hero-subtitle waviy">
               <span style="--i:1">P</span>
               <span style="--i:2">r</span>
@@ -177,52 +184,54 @@
               <span style="--i:37">r</span>
             </p> -->
             <p class="hero-subtitle waviy">
-  <span style="--i:1">S</span>
-  <span style="--i:2">o</span>
-  <span style="--i:3">f</span>
-  <span style="--i:4">t</span>
-  <span style="--i:5">w</span>
-  <span style="--i:6">a</span>
-  <span style="--i:7">r</span>
-  <span style="--i:8">e</span>
-  <span style="--i:9"> </span>
-  <span style="--i:10">E</span>
-  <span style="--i:11">n</span>
-  <span style="--i:12">g</span>
-  <span style="--i:13">i</span>
-  <span style="--i:14">n</span>
-  <span style="--i:15">e</span>
-  <span style="--i:16">e</span>
-  <span style="--i:17">r</span>
-  <span style="--i:18"> </span>
-  <span style="--i:19">&</span>
-  <span style="--i:20"> </span>
-  <br>
-  <span style="--i:21">W</span>
-  <span style="--i:22">e</span>
-  <span style="--i:23">b</span>
-  <span style="--i:24"> </span>
-  <span style="--i:25">D</span>
-  <span style="--i:26">e</span>
-  <span style="--i:27">v</span>
-  <span style="--i:28">e</span>
-  <span style="--i:29">l</span>
-  <span style="--i:30">o</span>
-  <span style="--i:31">p</span>
-  <span style="--i:32">e</span>
-  <span style="--i:33">r</span>
-</p>
-            
+              <span style="--i:1">A</span>
+              <span style="--i:2">s</span>
+              <span style="--i:3">p</span>
+              <span style="--i:4">i</span>
+              <span style="--i:5">r</span>
+              <span style="--i:6">i</span>
+              <span style="--i:7">n</span>
+              <span style="--i:8">g</span>
+              <span style="--i:9"> </span>
+              <span style="--i:10">A</span>
+              <span style="--i:11">I</span>
+              <span style="--i:12">/</span>
+              <span style="--i:13">M</span>
+              <span style="--i:14">L</span>
+              <span style="--i:15"> </span>
+              <span style="--i:16">&</span>
+              <span style="--i:17"> </span>
+              <br>
+              <span style="--i:18">S</span>
+              <span style="--i:19">o</span>
+              <span style="--i:20">f</span>
+              <span style="--i:21">t</span>
+              <span style="--i:22">w</span>
+              <span style="--i:23">a</span>
+              <span style="--i:24">r</span>
+              <span style="--i:25">e</span>
+              <span style="--i:26"> </span>
+              <span style="--i:27">E</span>
+              <span style="--i:28">n</span>
+              <span style="--i:29">g</span>
+              <span style="--i:30">i</span>
+              <span style="--i:31">n</span>
+              <span style="--i:32">e</span>
+              <span style="--i:33">e</span>
+              <span style="--i:34">r</span>
+            </p>
+
             <div class="hero-banner">
               <img src="./assets/images/hero-banner.jpg" width="800" height="800" class="w-100">
             </div>
 
             <p class="section-text">
-              Hi, I'm Nisarg, a Information Technology  student passionate about coding, problem-solving, and creating innovative tech solutions
+              Hi, I'm Nisarg, a Information Technology student passionate about coding, problem-solving, and creating
+              innovative tech solutions
             </p>
 
             <a href="./assets/images/Nisarg_CV.pdf" class="btn has-before">
-              <span class="span">Download CV
+              <span class="span">Download Resume
               </span>
 
               <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
@@ -254,13 +263,17 @@
               <h2 class="h2 section-title" id="service-label">Services</h2>
             </div>
 
-            <p class="section-text">I build end-to-end full-stack web applications with responsive, modern, and visually appealing user interfaces. I focus on creating scalable, high-performance solutions with clean architecture and optimized performance.
+            <p class="section-text">I build end-to-end full-stack web applications with responsive, modern, and visually
+              appealing user interfaces. I focus on creating scalable, high-performance solutions with clean
+              architecture and optimized performance.
 
-I also work with AI technologies to enhance development workflows and build efficient applications. I have hands-on experience with AI-powered development tools such as Cursor AI, Claude AI, Antigravity AI, and similar platforms.</p>
+              I also work with AI technologies to enhance development workflows and build efficient applications. I have
+              hands-on experience with AI-powered development tools such as Cursor AI, Claude AI, Antigravity AI, and
+              similar platforms.</p>
 
           </div>
 
-          
+
 
           <div class="slider" data-slider>
 
@@ -268,11 +281,11 @@ I also work with AI technologies to enhance development workflows and build effi
 
             <ul class="slider-container service-list" data-slider-container>
 
-              
+
 
               <li class="slider-item" data-slider-item>
                 <div class="service-card">
-                  
+
                   <div class="card-icon">
                     <ion-icon name="code-slash-outline"></ion-icon>
                   </div>
@@ -320,7 +333,8 @@ I also work with AI technologies to enhance development workflows and build effi
                   <h3 class="h3 card-title">Technologies</h3>
 
                   <p class="card-text">
-                   I work with Java, React.js, TypeScript, Node.js, Express.js, MongoDB, and Python, and I'm always open to learning new technologies and frameworks to build better solutions.
+                    I work with Java, React.js, TypeScript, Node.js, Express.js, MongoDB, and Python, and I'm always
+                    open to learning new technologies and frameworks to build better solutions.
                   </p>
 
                   <span class="text-lg card-number">03</span>
@@ -340,7 +354,8 @@ I also work with AI technologies to enhance development workflows and build effi
                   <h3 class="h3 card-title">Canva</h3>
 
                   <p class="card-text">
-                    Creating stunning graphics and visual designs effortlessly with Canva, perfect for presentations and creative projects.
+                    Creating stunning graphics and visual designs effortlessly with Canva, perfect for presentations and
+                    creative projects.
                   </p>
 
                   <span class="text-lg card-number">04</span>
@@ -360,7 +375,8 @@ I also work with AI technologies to enhance development workflows and build effi
                   <h3 class="h3 card-title">Adobe Premiere Pro</h3>
 
                   <p class="card-text">
-                    Skilled in video editing and post-production, using Adobe Premiere Pro to create polished and engaging visual content.
+                    Skilled in video editing and post-production, using Adobe Premiere Pro to create polished and
+                    engaging visual content.
                   </p>
 
                   <span class="text-lg card-number">05</span>
@@ -380,7 +396,8 @@ I also work with AI technologies to enhance development workflows and build effi
                   <h3 class="h3 card-title">Social Media</h3>
 
                   <p class="card-text">
-                    Experienced in leveraging social media platforms to create engaging content, grow reach, and connect with audiences effectively.
+                    Experienced in leveraging social media platforms to create engaging content, grow reach, and connect
+                    with audiences effectively.
                   </p>
 
                   <span class="text-lg card-number">06</span>
@@ -428,14 +445,16 @@ I also work with AI technologies to enhance development workflows and build effi
 
             <div>
               <p class="section-text">
-                Creating websites, solving problems, designing innovative tech solutions, and crafting visually stunning templates and videos.
+                Creating websites, solving problems, designing innovative tech solutions, and crafting visually stunning
+                templates and videos.
               </p>
 
               <p class="section-text">
                 I can easily familiarize myself with new software and technology.
               </p>
 
-              <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcRzDDHxnDrRqfbKJDsnbDjnvPJqQGzSGVRcRClwBHtrjTjPSHHTTzQlBlWhhpSGCgHxVtBSM" class="btn has-before">nisargapatel09@gmail.com</a>
+              <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcRzDDHxnDrRqfbKJDsnbDjnvPJqQGzSGVRcRClwBHtrjTjPSHHTTzQlBlWhhpSGCgHxVtBSM"
+                class="btn has-before"><span class="span">nisargapatel09@gmail.com</span></a>
             </div>
 
             <div class="skills-section">
@@ -474,8 +493,8 @@ I also work with AI technologies to enhance development workflows and build effi
                 </li>
               </ul>
             </div>
-            
-            
+
+
 
           </div>
 
@@ -500,9 +519,13 @@ I also work with AI technologies to enhance development workflows and build effi
             <h2 class="h2 section-title">Work Samples</h2>
           </div>
 
-         <!--  <p class="section-text">
-            Here are some examples of my work
-          </p> -->
+          <p class="section-text">
+            <span class="stat-highlight">
+              <span class="stat-dot"></span>
+              <span class="stat-num">10+</span>
+            </span>
+            projects built across AI/ML &amp; Web development, and real-world problem solving
+          </p>
 
         </div>
 
@@ -513,39 +536,38 @@ I also work with AI technologies to enhance development workflows and build effi
             <li class="slider-item">
               <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
 
-                <img src="./assets/images/mern.png" width="600" height="600" loading="lazy" alt="portfolio"
+                <img src="./assets/images/MedInsight.gif" width="600" height="600" loading="lazy" alt="portfolio"
                   class="img-cover">
 
                 <div class="card-content">
-                  <h3 class="h3 card-title">MERN full-stack Project</h3>
+                  <h3 class="h3 card-title">MedInsight AI – AI Medical Report Analyzer</h3>
 
-                  <p class="card-text">A full-stack MERN (MongoDB, Express.js, React, Node.js) e-commerce application with admin panel, user authentication, shopping cart, and payment integration.</p>
+                  <p class="card-text">AI-powered medical lab report analyzer that extracts biomarkers, visualizes
+                    health trends, and provides context-aware insights through a Gemini-powered RAG chatbot.
+                  </p>
                 </div>
 
-                <a
-  href="https://walkup-mern.netlify.app"
-  class="layer-link"
-  target="_blank"
-  rel="noopener noreferrer"
->
-</a>
+                <a href="https://medinsight-frontend-3ky7.onrender.com/login" class="layer-link"></a>
 
               </div>
             </li>
 
+
             <li class="slider-item">
               <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
 
-                <img src="./assets/images/mealsnap.png" width="600" height="600" loading="lazy" alt="AI"
+                <img src="./assets/images/MealSnap.gif" width="600" height="600" loading="lazy" alt="AI"
                   class="img-cover">
 
                 <div class="card-content">
                   <h3 class="h3 card-title">AI Project</h3>
 
-                  <p class="card-text">MealSnap AI is an intelligent app that analyzes grocery receipt images using OCR and generates personalized, nutrition-based weekly meal plans.</p>
+                  <p class="card-text">MealSnap AI is an intelligent app that analyzes grocery receipt images using OCR
+                    and generates personalized, nutrition-based weekly meal plans.</p>
                 </div>
 
-                <a href="https://mealsnapai2.netlify.app" class="layer-link" target="_blank" rel="noopener noreferrer"></a>
+                <a href="https://mealsnapai2.netlify.app" class="layer-link" target="_blank"
+                  rel="noopener noreferrer"></a>
 
               </div>
             </li>
@@ -553,16 +575,19 @@ I also work with AI technologies to enhance development workflows and build effi
             <li class="slider-item">
               <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
 
-                <img src="./assets/images/django.png" width="600" height="600" loading="lazy" alt="Django"
+                <img src="./assets/images/NLP.gif" width="600" height="600" loading="lazy" alt="portfolio"
                   class="img-cover">
 
                 <div class="card-content">
-                  <h3 class="h3 card-title">D-jango Project</h3>
+                  <h3 class="h3 card-title">NLP- Hate Speech Detection</h3>
 
-                  <p class="card-text">Multi-author blogging platform built with Django. It includes public blog pages, category browsing, search, comments/replies, and a role-based dashboard for authors and admins. An API app is included for programmatic access.</p>
+                  <p class="card-text">Transformer-based NLP system for detecting Safe, Offensive, and Hate Speech with
+                    a production-ready FastAPI API, React dashboard, voice prediction, and explainable AI.</p>
                 </div>
 
-                <a href="https://github.com/RaxorhAx11/MultiBlogs-Multi-Author-Blog-Platform-Django-" class="layer-link"></a>
+                <a href="https://github.com/RaxorhAx11/Hate-Speech-Detection-using-Transformer-based-NLP"
+                  class="layer-link" target="_blank" rel="noopener noreferrer">
+                </a>
 
               </div>
             </li>
@@ -570,70 +595,24 @@ I also work with AI technologies to enhance development workflows and build effi
             <li class="slider-item">
               <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
 
-                <img src="./assets/images/portfolio-1.png" width="600" height="600" loading="lazy" alt="portfolio"
-                  class="img-cover">
+                <img src="./assets/images/walkup_login_animation.gif" width="600" height="600" loading="lazy"
+                  alt="portfolio" class="img-cover">
 
                 <div class="card-content">
-                  <h3 class="h3 card-title">WalkUp</h3>
+                  <h3 class="h3 card-title">MERN full-stack Project</h3>
 
-                  <p class="card-text">First my frontend project</p>
+                  <p class="card-text">A full-stack MERN (MongoDB, Express.js, React, Node.js) e-commerce application
+                    with admin panel, user authentication, shopping cart, and payment integration.</p>
                 </div>
 
-                <a href="https://walkup.netlify.app/" class="layer-link"></a>
+                <a href="https://walkup-mern.netlify.app" class="layer-link" target="_blank" rel="noopener noreferrer">
+                </a>
 
               </div>
             </li>
 
-            <li class="slider-item">
-              <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
 
-                <img src="./assets/images/portfolio-2.png" width="600" height="600" loading="lazy" alt="portfolio"
-                  class="img-cover">
 
-                <div class="card-content">
-                  <h3 class="h3 card-title">Portfolio</h3>
-
-                  <p class="card-text">front-end</p>
-                </div>
-
-                <a href="#" class="layer-link"></a>
-
-              </div>
-            </li>
-
-            <li class="slider-item">
-              <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
-
-                <img src="./assets/images/portfolio-3.jpg" width="600" height="600" loading="lazy" alt="portfolio"
-                  class="img-cover">
-
-                <div class="card-content">
-                  <h3 class="h3 card-title">Update Soon</h3>
-
-                  <p class="card-text">Java-Based Project</p>
-                </div>
-
-                <a href="#" class="layer-link"></a>
-
-              </div>
-            </li>
-
-            <li class="slider-item">
-              <div class="portfolio-card img-holder" style="--width: 1200; --height: 600;">
-
-                <img src="./assets/images/portfolio-4.jpg" width="600" height="600" loading="lazy" alt="portfolio"
-                  class="img-cover">
-
-                <div class="card-content">
-                  <h3 class="h3 card-title">Update Soon</h3>
-
-                  <p class="card-text">A Project Focused on Solving Real-World Problems</p>
-                </div>
-
-                <a href="#" class="layer-link"></a>
-
-              </div>
-            </li>
 
 
           </ul>
@@ -675,8 +654,7 @@ I also work with AI technologies to enhance development workflows and build effi
               <div class="blog-card">
 
                 <figure class="card-banner img-holder" style="--width: 700; --height: 470;">
-                  <img src="./assets/images/gaming.gif" width="700" height="470" loading="lazy"
-                   class="img-cover">
+                  <img src="./assets/images/gaming.gif" width="700" height="470" loading="lazy" class="img-cover">
                 </figure>
 
                 <div class="card-content">
@@ -686,11 +664,13 @@ I also work with AI technologies to enhance development workflows and build effi
                     <h3 class="h3 card-title">Get Started With Gaming</h3>
 
                     <p class="card-text">
-                      Yes, you know I’m a gamer! In the gaming world, I’m known as RaxorhAx. I enjoy playing for fun and connecting with others. 
+                      Yes, you know I’m a gamer! In the gaming world, I’m known as RaxorhAx. I enjoy playing for fun and
+                      connecting with others.
                       If you want to join, add me on Discord: raxorhax, and drop me a message!
                     </p>
 
-                    <a href="https://www.youtube.com/@RaxorhAx" class="btn has-before" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.youtube.com/@RaxorhAx" class="btn has-before" target="_blank"
+                      rel="noopener noreferrer">
                       <span class="span">Youtube</span>
 
                       <ion-icon name="arrow-forward"></ion-icon>
@@ -706,8 +686,8 @@ I also work with AI technologies to enhance development workflows and build effi
               <div class="blog-card">
 
                 <figure class="card-banner img-holder" style="--width: 700; --height: 470;">
-                  <img src="./assets/images/photography.gif" width="700" height="470" loading="lazy"
-                    alt="photographs." class="img-cover">
+                  <img src="./assets/images/photography.gif" width="700" height="470" loading="lazy" alt="photographs."
+                    class="img-cover">
                 </figure>
 
                 <div class="card-content">
@@ -716,11 +696,10 @@ I also work with AI technologies to enhance development workflows and build effi
                     <h3 class="h3 card-title">Photography</h3>
 
                     <p class="card-text">
-                      My name is Nisarg, which means nature. 
-                      Just like nature, photography helps me capture moments in their purest form, whether it's a breathtaking landscape or a simple portrait, I find beauty in everything
+                      My name is Nisarg, which means nature.
+                      Just like nature, photography helps me capture moments in their purest form, whether it's a
+                      breathtaking landscape or a simple portrait, I find beauty in everything
                     </p>
-
-                    </a>
                   </div>
 
                 </div>
@@ -731,8 +710,7 @@ I also work with AI technologies to enhance development workflows and build effi
               <div class="blog-card">
 
                 <figure class="card-banner img-holder" style="--width: 700; --height: 470;">
-                  <img src="./assets/images/videography.gif" width="700" height="470" loading="lazy"
-                   class="img-cover">
+                  <img src="./assets/images/videography.gif" width="700" height="470" loading="lazy" class="img-cover">
                 </figure>
 
                 <div class="card-content">
@@ -742,7 +720,8 @@ I also work with AI technologies to enhance development workflows and build effi
                     <h3 class="h3 card-title">Videography</h3>
 
                     <p class="card-text">
-                      I enjoy cinematography, B-roll, and using movement, lighting, and emotion to bring scenes to life, creating visuals that resonate
+                      I enjoy cinematography, B-roll, and using movement, lighting, and emotion to bring scenes to life,
+                      creating visuals that resonate
                     </p>
 
 
@@ -754,10 +733,10 @@ I also work with AI technologies to enhance development workflows and build effi
             </li>
 
           </ul>
-          
-         </div>
-         
-         
+
+        </div>
+
+
       </section>
 
     </article>
@@ -781,7 +760,7 @@ I also work with AI technologies to enhance development workflows and build effi
         </li>
 
         <li>
-          <a href="nisargapatel09@gmail.com" class="footer-link" target="_blank" rel="noopener noreferrer">nisargapatel09@gmail.com</a>
+          <a href="mailto:nisargapatel09@gmail.com" class="footer-link">nisargapatel09@gmail.com</a>
         </li>
 
       </ul>
@@ -807,7 +786,8 @@ I also work with AI technologies to enhance development workflows and build effi
         </li>
 
         <li>
-          <a href="https://www.instagram.com/nisargpatel.09" class="social-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/nisargpatel.09" class="social-link" target="_blank"
+            rel="noopener noreferrer">
             <ion-icon name="logo-instagram"></ion-icon>
           </a>
         </li>
@@ -819,7 +799,8 @@ I also work with AI technologies to enhance development workflows and build effi
         </li>
 
         <li>
-          <a href="https://www.linkedin.com/in/nisarg-patel-0b469b245/" class="social-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/nisarg-patel-0b469b245/" class="social-link" target="_blank"
+            rel="noopener noreferrer">
             <ion-icon name="logo-linkedin"></ion-icon>
           </a>
         </li>
@@ -832,7 +813,7 @@ I also work with AI technologies to enhance development workflows and build effi
   <!-- 
     - custom js link
   -->
-  <script src="./assets/js/script.js"></script>
+  <script type="module" src="./assets/js/script.js"></script>
 
   <!-- 
     - ionicon link
